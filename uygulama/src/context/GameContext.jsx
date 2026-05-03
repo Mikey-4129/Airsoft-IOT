@@ -2,6 +2,33 @@ import { createContext, useContext, useReducer } from 'react';
 
 const GameContext = createContext(null);
 
+// ─── BÖLGE TANIMI ───────────────────────────────────────────────
+export const BOLGELER = {
+  kalp:       { id: 'kalp',       ad: 'Kalp',       ikon: '💔', piezoPin: 0, renk: '#f43f5e' },
+  solCiger:   { id: 'solCiger',   ad: 'Sol Ciğer',  ikon: '🫁', piezoPin: 1, renk: '#fb923c' },
+  sagCiger:   { id: 'sagCiger',   ad: 'Sağ Ciğer',  ikon: '🫁', piezoPin: 2, renk: '#fb923c' },
+  solOmuz:    { id: 'solOmuz',    ad: 'Sol Omuz',   ikon: '💪', piezoPin: 3, renk: '#60a5fa' },
+  sagOmuz:    { id: 'sagOmuz',    ad: 'Sağ Omuz',   ikon: '💪', piezoPin: 4, renk: '#60a5fa' },
+};
+
+// Her oyun modunda bölgenin verdiği hasar (0-100 can üzerinden)
+export const BOLGE_HASAR = {
+  classic: { kalp: 100, solCiger: 100, sagCiger: 100, solOmuz: 100, sagOmuz: 100 }, // hepsi anlık ölüm
+  hp:      { kalp: 100, solCiger: 70,  sagCiger: 70,  solOmuz: 30,  sagOmuz: 30  },
+  team:    { kalp: 100, solCiger: 70,  sagCiger: 70,  solOmuz: 30,  sagOmuz: 30  },
+  score:   { kalp: 100, solCiger: 70,  sagCiger: 70,  solOmuz: 30,  sagOmuz: 30  },
+  medic:   { kalp: 100, solCiger: 70,  sagCiger: 70,  solOmuz: 30,  sagOmuz: 30  },
+};
+
+// Her bölgenin vurana kazandırdığı skor puanı
+export const BOLGE_SKOR = {
+  kalp:     50,
+  solCiger: 35,
+  sagCiger: 35,
+  solOmuz:  15,
+  sagOmuz:  15,
+};
+
 const initialState = {
   ekran: 'dashboard', // dashboard | oyuncular | mod | canli | bitis
   oyunDurumu: 'bekleniyor', // bekleniyor | devam | bitti
@@ -74,14 +101,33 @@ function reducer(state, action) {
       return { ...state, oyunDurumu: 'bitti', ekran: 'bitis' };
 
     case 'VURULMA_ISLE': {
-      const { hedefId, vuranId, hasar } = action.payload;
+      const { hedefId, vuranId, bolgeId } = action.payload;
+      const mod = state.oyunModu || 'hp';
+
+      // Bölgeye göre hasar hesapla
+      const hasar = BOLGE_HASAR[mod]?.[bolgeId] ?? 30;
+      // Bölgeye göre vurana skor ekle (score modunda daha fazla)
+      const skorKazanim = mod === 'score'
+        ? BOLGE_SKOR[bolgeId] * 2   // Score modunda puan 2x
+        : BOLGE_SKOR[bolgeId];
+
+      const bolge = BOLGELER[bolgeId];
+
+      // Takım modu dost ateşi kontrolü
+      const hedefOyuncu = state.oyuncular.find(o => o.id === hedefId);
+      const vuranOyuncu = state.oyuncular.find(o => o.id === vuranId);
+      if (state.modAyarlari.dostAtesiEngelle && hedefOyuncu?.takim === vuranOyuncu?.takim) {
+        // Dost ateşi — işlem yapma
+        return state;
+      }
+
       let yeniOyuncular = state.oyuncular.map(o => {
         if (o.id === hedefId) {
           const yeniHp = Math.max(0, o.hp - hasar);
           return { ...o, hp: yeniHp, vurulma: o.vurulma + 1, durum: yeniHp <= 0 ? 'elendi' : 'aktif' };
         }
         if (o.id === vuranId) {
-          return { ...o, skor: o.skor + 10, vurma: o.vurma + 1 };
+          return { ...o, skor: o.skor + skorKazanim, vurma: o.vurma + 1 };
         }
         return o;
       });
@@ -91,17 +137,24 @@ function reducer(state, action) {
       const yeniOlay = {
         id: Date.now(),
         zaman: new Date().toLocaleTimeString('tr-TR'),
-        mesaj: `🎯 ${vuran?.ad || '?'} → ${hedef?.ad || '?'} (${hasar} hasar)`,
+        mesaj: `${bolge.ikon} ${vuran?.ad || '?'} → ${hedef?.ad || '?'} [${bolge.ad}] ${hasar} hasar / +${skorKazanim} puan`,
         tur: 'vurus',
+        bolge: bolgeId,
+        hasar,
+        skor: skorKazanim,
       };
 
       // Kazanan kontrolü
       let kazanan = null;
       let oyunBitti = false;
-      if (state.oyunModu === 'classic' || state.oyunModu === 'hp') {
+      if (mod === 'classic' || mod === 'hp') {
         const hayattakiler = yeniOyuncular.filter(o => o.durum === 'aktif');
         if (hayattakiler.length === 1) { kazanan = hayattakiler[0]; oyunBitti = true; }
         if (hayattakiler.length === 0) { oyunBitti = true; }
+      } else if (mod === 'team') {
+        const aktifA = yeniOyuncular.filter(o => o.takim === 'A' && o.durum === 'aktif');
+        const aktifB = yeniOyuncular.filter(o => o.takim === 'B' && o.durum === 'aktif');
+        if (aktifA.length === 0 || aktifB.length === 0) { oyunBitti = true; }
       }
 
       return {
@@ -113,6 +166,7 @@ function reducer(state, action) {
         ekran: oyunBitti ? 'bitis' : state.ekran,
       };
     }
+
 
     case 'SURE_GUNCELLE':
       return { ...state, oyunSuresi: action.payload };

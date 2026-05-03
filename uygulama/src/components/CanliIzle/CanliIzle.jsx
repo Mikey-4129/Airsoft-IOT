@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGame } from '../../context/GameContext';
+import { BOLGELER, BOLGE_HASAR, BOLGE_SKOR } from '../../context/GameContext';
 import './CanliIzle.css';
+
+const BOLGE_LISTESI = Object.values(BOLGELER);
 
 export default function CanliIzle() {
   const { state, dispatch } = useGame();
-  const { oyuncular, olaylar, modAyarlari, oyunModu, oyunSuresi } = state;
+  const { oyuncular, olaylar, oyunModu, oyunSuresi } = state;
 
   const [simTimer, setSimTimer] = useState(0);
   const timerRef = useRef(null);
+  const [secilenBolge, setSecilenBolge] = useState(null); // simülasyon için
 
-  // Süre sayacı
   useEffect(() => {
     timerRef.current = setInterval(() => {
       setSimTimer(t => t + 1);
@@ -24,7 +27,6 @@ export default function CanliIzle() {
     return `${d}:${s}`;
   };
 
-  // Simüle vurulma testi
   const simuleVurulma = () => {
     const aktifler = oyuncular.filter(o => o.durum === 'aktif');
     if (aktifler.length < 2) return;
@@ -32,8 +34,8 @@ export default function CanliIzle() {
     const vuranlar = aktifler.filter(o => o.id !== hedef.id && o.takim !== hedef.takim);
     if (!vuranlar.length) return;
     const vuran = vuranlar[Math.floor(Math.random() * vuranlar.length)];
-    const hasar = oyunModu === 'classic' ? modAyarlari.baslangicCan : modAyarlari.hasarMiktari;
-    dispatch({ type: 'VURULMA_ISLE', payload: { hedefId: hedef.id, vuranId: vuran.id, hasar } });
+    const bolgeId = secilenBolge || BOLGE_LISTESI[Math.floor(Math.random() * BOLGE_LISTESI.length)].id;
+    dispatch({ type: 'VURULMA_ISLE', payload: { hedefId: hedef.id, vuranId: vuran.id, bolgeId } });
   };
 
   const takimA = oyuncular.filter(o => o.takim === 'A');
@@ -51,16 +53,34 @@ export default function CanliIzle() {
         </button>
       </div>
 
+      {/* BÖLGE HASAR HARİTASI */}
+      <BolgeHaritasi oyunModu={oyunModu} secilenBolge={secilenBolge} setSecilenBolge={setSecilenBolge} />
+
       <div className="ci-takimlar">
         <TakimPanel takim="A" renk="#f87171" oyuncular={takimA} />
         <div className="ci-vs">VS</div>
         <TakimPanel takim="B" renk="#60a5fa" oyuncular={takimB} />
       </div>
 
-      {/* Simülasyon Butonu — donanım olmadığı zaman test için */}
-      <button className="ci-sim-btn" id="btn-simulate" onClick={simuleVurulma}>
-        🎯 Simüle Vurulma (Test)
-      </button>
+      {/* Simülasyon Butonu */}
+      <div className="ci-sim-panel">
+        <div className="ci-sim-bolge-sec">
+          <span className="ci-sim-etiket">Simülasyon Bölgesi:</span>
+          {BOLGE_LISTESI.map(b => (
+            <button
+              key={b.id}
+              className={`ci-sim-bolge-btn ${secilenBolge === b.id ? 'secili' : ''}`}
+              style={secilenBolge === b.id ? { borderColor: b.renk, color: b.renk } : {}}
+              onClick={() => setSecilenBolge(prev => prev === b.id ? null : b.id)}
+            >
+              {b.ikon} {b.ad}
+            </button>
+          ))}
+        </div>
+        <button className="ci-sim-btn" id="btn-simulate" onClick={simuleVurulma}>
+          🎯 Simüle Vurulma {secilenBolge ? `(${BOLGELER[secilenBolge].ad})` : '(Rastgele)'}
+        </button>
+      </div>
 
       {oyunModu === 'medic' && (
         <div className="ci-medic-panel">
@@ -91,11 +111,81 @@ export default function CanliIzle() {
             <div key={o.id} className={`ci-olay ${o.tur}`}>
               <span className="ci-olay-zaman">{o.zaman}</span>
               <span className="ci-olay-mesaj">{o.mesaj}</span>
+              {o.hasar && <span className="ci-olay-hasar" style={{ color: o.hasar >= 100 ? '#f43f5e' : o.hasar >= 70 ? '#fb923c' : '#60a5fa' }}>-{o.hasar} HP</span>}
             </div>
           ))}
         </div>
       </div>
     </div>
+  );
+}
+
+// ─── BÖLGE HASAR HARİTASI ──────────────────────────────────────
+function BolgeHaritasi({ oyunModu, secilenBolge, setSecilenBolge }) {
+  const mod = oyunModu || 'hp';
+  return (
+    <div className="bolge-harita">
+      <h3 className="bolge-harita-baslik">🎯 Bölge Hasar Haritası</h3>
+      <div className="bolge-vucut">
+        {/* Görsel vücut şeması */}
+        <div className="bolge-vucut-svg">
+          {/* Sol Omuz */}
+          <BolgeKart
+            bolge={BOLGELER.solOmuz} mod={mod}
+            secili={secilenBolge === 'solOmuz'}
+            onClick={() => setSecilenBolge(p => p === 'solOmuz' ? null : 'solOmuz')}
+            konum="sol-omuz"
+          />
+          {/* Sağ Omuz */}
+          <BolgeKart
+            bolge={BOLGELER.sagOmuz} mod={mod}
+            secili={secilenBolge === 'sagOmuz'}
+            onClick={() => setSecilenBolge(p => p === 'sagOmuz' ? null : 'sagOmuz')}
+            konum="sag-omuz"
+          />
+          {/* Kalp */}
+          <BolgeKart
+            bolge={BOLGELER.kalp} mod={mod}
+            secili={secilenBolge === 'kalp'}
+            onClick={() => setSecilenBolge(p => p === 'kalp' ? null : 'kalp')}
+            konum="kalp"
+          />
+          {/* Sol Ciğer */}
+          <BolgeKart
+            bolge={BOLGELER.solCiger} mod={mod}
+            secili={secilenBolge === 'solCiger'}
+            onClick={() => setSecilenBolge(p => p === 'solCiger' ? null : 'solCiger')}
+            konum="sol-ciger"
+          />
+          {/* Sağ Ciğer */}
+          <BolgeKart
+            bolge={BOLGELER.sagCiger} mod={mod}
+            secili={secilenBolge === 'sagCiger'}
+            onClick={() => setSecilenBolge(p => p === 'sagCiger' ? null : 'sagCiger')}
+            konum="sag-ciger"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BolgeKart({ bolge, mod, secili, onClick, konum }) {
+  const hasar = BOLGE_HASAR[mod]?.[bolge.id] ?? 30;
+  const skor = mod === 'score' ? BOLGE_SKOR[bolge.id] * 2 : BOLGE_SKOR[bolge.id];
+  const tehlikeSeviye = hasar >= 100 ? 'olumcul' : hasar >= 70 ? 'agir' : 'hafif';
+
+  return (
+    <button
+      className={`bolge-kart ${konum} ${secili ? 'secili' : ''} tehlike-${tehlikeSeviye}`}
+      style={secili ? { borderColor: bolge.renk, boxShadow: `0 0 12px ${bolge.renk}66` } : {}}
+      onClick={onClick}
+    >
+      <span className="bolge-ikon">{bolge.ikon}</span>
+      <span className="bolge-ad">{bolge.ad}</span>
+      <span className="bolge-hasar-goster" style={{ color: bolge.renk }}>-{hasar} HP</span>
+      <span className="bolge-skor-goster">+{skor} Puan</span>
+    </button>
   );
 }
 
