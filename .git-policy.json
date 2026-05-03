@@ -1,0 +1,13 @@
+{
+  "git_policy": {
+    "auto_commit_on_every_change": false,
+    "sync_script": "sync.ps1",
+    "sync_timing": [
+      "start_of_session",
+      "end_of_session",
+      "on_demand"
+    ],
+    "commit_message_format": "Auto-sync: YYYY-MM-DD HH:MM:SS",
+    "description": "Küçük değişiklikler için ayrı commit atılmayacak. Sadece seans başı/sonu veya talep üzerine sync.ps1 kullanılacak."
+  }
+}
