@@ -1,0 +1,173 @@
+.oyun-bitis {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.ob-confetti { position: absolute; top: 0; left: 0; width: 100%; pointer-events: none; }
+
+.ob-konfeti {
+  position: absolute;
+  top: -20px;
+  font-size: 1.5rem;
+  animation: konfeti-dus 3s ease-in infinite;
+}
+
+@keyframes konfeti-dus {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(80px) rotate(360deg); opacity: 0; }
+}
+
+.ob-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ob-bitis-yazisi {
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  background: linear-gradient(135deg, #facc15, #f87171);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ob-sure { font-size: 0.9rem; color: var(--text-muted); }
+
+.ob-kazanan-kart {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  position: relative;
+}
+
+.ob-kazanan-kart.bireysel {
+  border: 1px solid rgba(250,204,21,0.4);
+  background: rgba(250,204,21,0.06);
+}
+
+.ob-kazanan-kart.takim {
+  border: 1px solid rgba(74,222,128,0.3);
+  background: rgba(74,222,128,0.06);
+}
+
+.ob-kazanan-kart.berabere {
+  border: 1px solid var(--border);
+}
+
+.ob-kupa {
+  font-size: 4rem;
+  filter: drop-shadow(0 0 20px rgba(250,204,21,0.5));
+  animation: kupa-dans 2s ease-in-out infinite;
+}
+
+@keyframes kupa-dans {
+  0%, 100% { transform: scale(1) rotate(-3deg); }
+  50% { transform: scale(1.1) rotate(3deg); }
+}
+
+.ob-kazanan-ad { font-size: 1.8rem; font-weight: 900; color: #facc15; }
+.ob-kazanan-altyazi { font-size: 0.85rem; color: var(--text-muted); }
+.ob-kazanan-stat { display: flex; gap: 1.5rem; font-size: 0.9rem; font-weight: 700; color: var(--text-muted); }
+
+.ob-sirali h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem;
+}
+
+.ob-tablo {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.ob-tablo-baslik {
+  display: grid;
+  grid-template-columns: 2rem 1fr 2.5rem 2.5rem 2.5rem 4rem 3rem;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.ob-tablo-satir {
+  display: grid;
+  grid-template-columns: 2rem 1fr 2.5rem 2.5rem 2.5rem 4rem 3rem;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.2s;
+}
+
+.ob-tablo-satir:last-child { border-bottom: none; }
+.ob-tablo-satir:hover { background: rgba(255,255,255,0.03); }
+
+.ob-tablo-satir.birinci {
+  background: rgba(250,204,21,0.07);
+}
+
+.ob-siralama { font-size: 0.9rem; text-align: center; }
+.ob-oyuncu-ad { font-weight: 700; }
+.ob-takim-badge { text-align: center; }
+.ob-puan { font-weight: 800; color: var(--accent); }
+.ob-durum { text-align: center; }
+
+.ob-takim-badge.a { }
+.ob-takim-badge.b { }
+
+.ob-butonlar { display: flex; gap: 1rem; }
+
+.ob-yeni-btn, .ob-anasayfa-btn {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.ob-yeni-btn {
+  background: linear-gradient(135deg, #4ade80, #22d3ee);
+  color: #0a0f14;
+  box-shadow: 0 4px 20px rgba(74,222,128,0.25);
+}
+
+.ob-yeni-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(74,222,128,0.35); }
+
+.ob-anasayfa-btn {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.ob-anasayfa-btn:hover { border-color: var(--accent); background: rgba(74,222,128,0.06); }
+
+@media (max-width: 500px) {
+  .ob-tablo-baslik, .ob-tablo-satir {
+    grid-template-columns: 2rem 1fr 2rem 2rem 2rem 3.5rem 2.5rem;
+    font-size: 0.75rem;
+    padding: 0.6rem 0.75rem;
+  }
+}

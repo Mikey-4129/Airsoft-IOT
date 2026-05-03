@@ -1,0 +1,49 @@
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: rgba(10, 15, 20, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+  z-index: 100;
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem 0;
+  color: var(--text-muted);
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-btn.aktif { color: var(--accent); }
+.nav-btn.kilitli { opacity: 0.3; cursor: not-allowed; }
+
+.nav-ikon { font-size: 1.3rem; }
+.nav-etiket { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.04em; }
+
+.nav-canli-nokta {
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 18px);
+  width: 6px;
+  height: 6px;
+  background: #4ade80;
+  border-radius: 50%;
+  animation: pulse-badge 1.2s infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}

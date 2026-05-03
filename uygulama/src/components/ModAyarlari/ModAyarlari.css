@@ -1,0 +1,98 @@
+.mod-ayarlari {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.mod-ayarlari h2 { font-size: 1.3rem; font-weight: 800; margin: 0; }
+
+.mod-secilmedi {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 3rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--text-muted);
+}
+
+.mod-secilmedi-ikon { font-size: 3rem; }
+.mod-secilmedi p { font-size: 1rem; margin: 0; }
+.mod-secilmedi span { font-size: 0.8rem; }
+
+.mod-bilgi-kart {
+  background: rgba(74,222,128,0.07);
+  border: 1px solid rgba(74,222,128,0.25);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.mod-bilgi-ikon { font-size: 2.5rem; flex-shrink: 0; }
+
+.mod-bilgi-kart h3 { margin: 0 0 0.3rem; font-size: 1.1rem; color: var(--accent); }
+.mod-bilgi-kart p { margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+.mod-ayar-listesi {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.ayar-satir {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  gap: 1rem;
+}
+
+.ayar-satir:last-child { border-bottom: none; }
+
+.ayar-metin { display: flex; flex-direction: column; gap: 0.15rem; }
+.ayar-etiket { font-size: 0.9rem; font-weight: 600; }
+.ayar-aciklama { font-size: 0.75rem; color: var(--text-muted); }
+
+.ayar-input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 700;
+  width: 90px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.ayar-input:focus { border-color: var(--accent); }
+
+.ayar-toggle {
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.ayar-toggle.aktif {
+  background: rgba(74,222,128,0.15);
+  border-color: rgba(74,222,128,0.4);
+  color: var(--accent);
+}

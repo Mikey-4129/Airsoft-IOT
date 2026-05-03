@@ -1,0 +1,179 @@
+.oyuncu-yonetim {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.oy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.oy-header h2 { font-size: 1.3rem; font-weight: 800; margin: 0; }
+
+.oy-sayac {
+  background: rgba(74,222,128,0.12);
+  color: var(--accent);
+  border: 1px solid rgba(74,222,128,0.3);
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.oy-form {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.oy-form h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.oy-form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.oy-input, .oy-select {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.oy-input:focus, .oy-select:focus {
+  border-color: var(--accent);
+}
+
+.oy-select { cursor: pointer; }
+
+.oy-ekle-btn {
+  background: linear-gradient(135deg, #4ade80, #22d3ee);
+  color: #0a0f14;
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 1.2rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.oy-ekle-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(74,222,128,0.3);
+}
+
+.oy-hata {
+  color: #f87171;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.oy-takimlar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.oy-takim-kart {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.oy-takim-baslik {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid;
+  border-color: inherit;
+}
+
+.oy-takim-sayi { font-size: 0.8rem; }
+
+.oy-bos {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 1rem 0;
+  margin: 0;
+}
+
+.oy-kart {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  transition: background 0.2s;
+}
+
+.oy-kart:hover { background: rgba(255,255,255,0.07); }
+
+.oy-kart-sol { display: flex; align-items: center; gap: 0.6rem; }
+
+.oy-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.oy-ad { font-size: 0.9rem; font-weight: 600; }
+.oy-id { font-size: 0.7rem; color: var(--text-muted); }
+
+.oy-sil-btn {
+  background: rgba(248,113,113,0.1);
+  color: #f87171;
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.oy-sil-btn:hover {
+  background: rgba(248,113,113,0.25);
+  transform: scale(1.1);
+}
+
+@media (max-width: 500px) {
+  .oy-takimlar { grid-template-columns: 1fr; }
+}
