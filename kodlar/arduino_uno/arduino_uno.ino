@@ -11,7 +11,7 @@ bool kilitVar = false;
 unsigned long kilitZamani = 0;
 const unsigned long KILIT_SURESI = 2000; // 2 saniye (2000 ms)
 
-int hp = 3;
+int hp = 100; // Can oranini 100 yaptik
 
 void setup() {
   Serial.begin(115200);
@@ -66,7 +66,7 @@ void loop() {
     return; // Döngüyü durdur
   }
 
-  // Kilitlenme zaman asimi kontrolü
+  // Kilitlenme zaman asimi kontrolü (Sadece arkaplanda calisir, LED'e yansimaz)
   if (kilitVar && (millis() - kilitZamani > KILIT_SURESI)) {
     kilitVar = false;
     Serial.println("Kilitlenme suresi doldu, iptal edildi.");
@@ -89,7 +89,7 @@ void loop() {
   int piezoDeger = analogRead(piezoPin);
 
   if (piezoDeger > 50 && kilitVar) {
-    hp--; // Cani 1 azalt
+    hp -= 50; // Her vurulmada can 50 azalir
     
     Serial.print("HEDEF VURULDU! Vuran: ");
     Serial.println(oyuncuBul(sonOyuncu));
@@ -97,7 +97,7 @@ void loop() {
     Serial.println(hp);
     Serial.println("==================");
 
-    // Vurulma efekti (1 saniye kirmizi)
+    // Vurulma efekti (1 saniye kirmizi flash)
     renkAyarla(true, false, false);
     delay(1000); 
 
@@ -106,10 +106,10 @@ void loop() {
 
   // Normal calisma durumunda LED guncellemesi
   if (hp > 0) {
-    if (kilitVar) {
-      renkAyarla(false, false, true); // Kilitli: MAVI
+    if (hp <= 50) {
+      renkAyarla(false, false, true); // Can 50 veya altina dustuyse MAVI (Yarali)
     } else {
-      renkAyarla(false, true, false); // Normal: YESIL
+      renkAyarla(false, true, false); // Can 50'den buyukse YESIL (Saglikli)
     }
   }
 }
