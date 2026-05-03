@@ -1,12 +1,30 @@
 const int irPin = 2;
 const int piezoPin = A0;
 
+// LED Pinleri
+const int ledR = 9;
+const int ledG = 10;
+const int ledB = 11;
+
 byte sonOyuncu = 0;
 bool kilitVar = false;
+unsigned long kilitZamani = 0;
+const unsigned long KILIT_SURESI = 2000; // 2 saniye (2000 ms)
+
+int hp = 3;
 
 void setup() {
   Serial.begin(115200);
   pinMode(irPin, INPUT_PULLUP);
+  
+  pinMode(ledR, OUTPUT);
+  pinMode(ledG, OUTPUT);
+  pinMode(ledB, OUTPUT);
+  
+  // Baslangicta hepsi kapali
+  digitalWrite(ledR, LOW);
+  digitalWrite(ledG, LOW);
+  digitalWrite(ledB, LOW);
 }
 
 byte readByte() {
@@ -34,12 +52,31 @@ String oyuncuBul(byte id) {
   return "Bilinmeyen";
 }
 
+// Kolay renk kontrol fonksiyonu
+void renkAyarla(bool r, bool g, bool b) {
+  digitalWrite(ledR, r ? HIGH : LOW);
+  digitalWrite(ledG, g ? HIGH : LOW);
+  digitalWrite(ledB, b ? HIGH : LOW);
+}
+
 void loop() {
+  // Eğer can bittiyse sistem donar ve sadece kırmızı yanar
+  if (hp <= 0) {
+    renkAyarla(true, false, false); 
+    return; // Döngüyü durdur
+  }
+
+  // Kilitlenme zaman asimi kontrolü
+  if (kilitVar && (millis() - kilitZamani > KILIT_SURESI)) {
+    kilitVar = false;
+    Serial.println("Kilitlenme suresi doldu, iptal edildi.");
+  }
 
   // 🔹 IR ile kilitlenme
   if (digitalRead(irPin) == LOW) {
     sonOyuncu = readByte();
     kilitVar = true;
+    kilitZamani = millis();
 
     Serial.print("Hedefe kilitlendi: ");
     Serial.println(oyuncuBul(sonOyuncu));
@@ -52,10 +89,27 @@ void loop() {
   int piezoDeger = analogRead(piezoPin);
 
   if (piezoDeger > 50 && kilitVar) {
-    Serial.print("HEDEF VURULDU! Puan: ");
+    hp--; // Cani 1 azalt
+    
+    Serial.print("HEDEF VURULDU! Vuran: ");
     Serial.println(oyuncuBul(sonOyuncu));
+    Serial.print("Kalan Can: ");
+    Serial.println(hp);
     Serial.println("==================");
 
-    delay(500); // tekrar tetiklemeyi önler
+    // Vurulma efekti (1 saniye kirmizi)
+    renkAyarla(true, false, false);
+    delay(1000); 
+
+    kilitVar = false; // Vurulma sonrasi kilidi kaldir
+  }
+
+  // Normal calisma durumunda LED guncellemesi
+  if (hp > 0) {
+    if (kilitVar) {
+      renkAyarla(false, false, true); // Kilitli: MAVI
+    } else {
+      renkAyarla(false, true, false); // Normal: YESIL
+    }
   }
 }
